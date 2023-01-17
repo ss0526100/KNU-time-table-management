@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>경북대 시간표 만들기</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
+</head>
+
+<body>
+    <div id="table-wrap">
+        <table id="time-table">
+            <tr id="table-head">
+                <td></td>
+                <td>월</td>
+                <td>화</td>
+                <td>수</td>
+                <td>목</td>
+                <td>금</td>
+                <td></td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">1A교시</td>
+                <td id="origin-of-table"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td rowspan="2" class="clock-table">오전 9시</td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">1B교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">2A교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td rowspan="2" class="clock-table">오전 10시</td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">2B교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">3A교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td rowspan="2" class="clock-table">오전 11시</td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">3B교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">4A교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td rowspan="2" class="clock-table">오후 12시</td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">4B교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">5A교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td rowspan="2" class="clock-table">오후 1시</td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">5B교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">6A교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td rowspan="2" class="clock-table">오후 2시</td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">6B교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">7A교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td rowspan="2" class="clock-table">오후 3시</td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">7B교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">8A교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td rowspan="2" class="clock-table">오후 4시</td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">8B교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">9A교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td rowspan="2" class="clock-table">오후 5시</td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">9B교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">10A교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td rowspan="2" class="clock-table">오후 6시</td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">10B교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">11A교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td rowspan="2" class="clock-table">오후 7시</td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">11B교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">12A교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td rowspan="2" class="clock-table">오후 8시</td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">12B교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">13A교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td rowspan="2" class="clock-table">오후 9시</td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">13B교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">14A교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td rowspan="2" class="clock-table">오후 10시</td>
+            </tr>
+            <tr class="table-content">
+                <td class="period-table">14B교시</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+
+        </table>
+    </div>
+    <div id="saved-list-wrap">
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,52 @@
+/*시간표 틀*/
+
+#table-wrap {
+    margin: auto auto auto 30px;
+}
+
+#time-table {
+    width: 800px;
+    margin: auto auto auto 30px;
+    border: 1px solid;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+#time-table th,
+td {
+    border: 1px solid;
+    border-color: #d6d6d6;
+    color: #a6a6a6;
+}
+
+#table-head {
+    padding: 10px;
+    height: 30px;
+    background-color: rgb(233, 232, 227);
+}
+
+.table-content {
+    padding: 0px;
+}
+
+.period-table {
+    height: 40px;
+    width: 100px;
+}
+
+.clock-table {
+    width: 100px;
+}
+
+
+/*저장된 시간표*/
+
+.saved-subject {
+    color: black;
+}
+
+.saved-subject>div>em {
+    font: inherit;
+    font-size: 17px;
+    font-weight: 900;
+}
