@@ -1,7 +1,8 @@
 /*시간표 틀*/
 
 #table-wrap {
-    margin: auto auto auto 30px;
+    float: left;
+    margin: auto auto auto 20px;
 }
 
 #time-table {
@@ -45,8 +46,38 @@ td {
     color: black;
 }
 
+.saved-subject>div {
+    padding: 10px;
+    margin: 0px;
+}
+
 .saved-subject>div>em {
     font: inherit;
     font-size: 17px;
     font-weight: 900;
+}
+
+#saved-list-wrap>.saved-subject:hover {
+    opacity: 0.8;
+}
+
+
+/*시간표 저장*/
+
+#add-by-wrtten-wrap {
+    padding: 10px;
+    display: inline-block;
+    margin: 5% 0 0 7%;
+    background: rgb(206, 200, 200);
+}
+
+#add-by-written-input {
+    padding: 10px;
+    float: left;
+    line-height: 200%;
+}
+
+#add-by-wrtten-wrap button {
+    margin: 3px auto;
+    line-height: 400%;
 }
