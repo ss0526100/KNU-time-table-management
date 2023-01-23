@@ -1,4 +1,3 @@
-console.log(JSON.parse(`{"rowIndex":0,"success":false,"message":null,"pageSize":100,"pageNum":1,"lctreMthodNm":null,"lctrmInfo":"\uC0B0\uACA9\uB3D9 \uCEA0\uD37C\uC2A4  \uC0AC\uD68C\uACFC\uD559\uB300\uD559","lctreLnggeSctcd":null,"crseNo":"CLTR0067-001","estblUnivNm":"\uC0AC\uD68C\uACFC\uD559\uB300\uD559","estblDprtnNm":"\uC0AC\uD68C\uD559\uACFC","estblYear":"2023","estblDprtnCd":"1202","estblSmstrSctnm":"1\uD559\uAE30","estblSmstrSctcd":"CMBS001400001","estblGrade":"1","sbjetSctnm":"\uAD50\uC591","sbjetNm":"\uC0AC\uD68C\uD559\uC758 \uC774\uD574","sbjetDvnno":"001","sbjetCd":"CLTR0067","gubun":null,"pckgeRqstPssblYn":"Y","pckgeRqstCnt":"0","name":null,"rmrk":null,"appcrCnt":"0","attlcPrscpCnt":"70","lssnsTimeInfo":"\uC6D4 1A,1B,2A,\uC218 2B,3A,3B","lssnsRealTimeInfo":"\uC6D4 09:00 ~ 10:30,\uC218 10:30 ~ 12:00","prctsTime":"0","doPlan":"Kor","thryTime":"3","totalPrfssNm":"\uC721\uC8FC\uC6D0,\uC774\uCC44\uBB38,\uCC9C\uC120\uC601,\uC870\uC8FC\uC740,\uC2E0\uD615\uC9C4,\uC774\uC18C\uD6C8","mngetEstblYn":"Y","code":null,"crdit":"3","expniSllbsYn":"N","bldngSn":null,"bldngCd":null,"bldngNm":null,"lssnsLcttmUntcd":null,"sbjetSctcd2":null,"rmnmCd":"451","isApi":null,"paging":false,"rowStatus":"R","pageSort":null}`))
 let tmp;
 history.scrollRestoration = "manual" //새로고침시 맨 위로 올려야 시간표 뒤틀리지 않음
     //시간표 색 조합
@@ -91,7 +90,7 @@ function saveSubject(subject, n) {
         newDiv.style.position = "absolute";
         newDiv.style.left = (originOfTableXPos + subject.lssnsRealTime[i][0] * tableWidth) + "px";
         newDiv.style.top = (originOfTableYPos + (subject.lssnsRealTime[i][1] / 30) * tableHeight) + "px";
-        newDiv.style.backgroundColor = "#" + colorArr[i];
+        newDiv.style.backgroundColor = "#" + colorArr[savedCnt];
         newDiv.addEventListener("click", e => {
             if (window.confirm(subject.sbjetNm + "-시간표에서 지우시겠습니까?")) {
                 deleteNthSubject(n);
@@ -127,7 +126,7 @@ function drawSubjectList() {
             newDiv.style.backgroundColor = "#" + colorArr[i];
             newDiv.addEventListener("click", e => {
                 if (window.confirm(subject.sbjetNm + "-시간표에서 지우시겠습니까?")) {
-                    deleteNthSubject(n);
+                    deleteNthSubject(i);
                 }
             })
             motherDiv.appendChild(newDiv);
@@ -152,6 +151,7 @@ function deleteNthSubject(n) {
     })
     savedSubjectList = tmpSavedSubjectList;
     tmpSavedSubjectList = null; //메모리 상에서 없애기
+    setCookie("savedSubjectList", savedSubjectList);
 }
 
 //직접입력의 버튼들 및 이벤트리스너
@@ -277,6 +277,8 @@ function saveSubjectByInput() {
         alert("겹치는 시간이 존재합니다");
         return -1;
     }
+    writtenSubjectNameInput.value = '';
+    writtenlctrmInput.value = '';
 }
 saveSubjectButton.addEventListener("click", e => {
     if (saveSubjectByInput() == -1) return;
@@ -286,7 +288,7 @@ saveSubjectButton.addEventListener("click", e => {
     drawNewAddedInputDiv();
 })
 
-//이벤트 리스너 렉 때문에 이렇게 이벤트 처리함
+//이벤트 리스너 버그 때문에 이렇게 이벤트 처리함
 document.addEventListener("click", e => {
     setTmpSubject();
 })
@@ -322,3 +324,6 @@ function getCookie(key) {
 
 let savedSubjectList = getCookie("savedSubjectList") || [];
 if (savedSubjectList.length > 0) drawSubjectList();
+
+console.log(JSON.parse(`{"rowIndex":0,"success":false,"message":null,"pageSize":100,"pageNum":1,"lctreMthodNm":null,"lctrmInfo":"\uC0B0\uACA9\uB3D9 \uCEA0\uD37C\uC2A4  \uC0AC\uD68C\uACFC\uD559\uB300\uD559","lctreLnggeSctcd":null,"crseNo":"CLTR0067-001","estblUnivNm":"\uC0AC\uD68C\uACFC\uD559\uB300\uD559","estblDprtnNm":"\uC0AC\uD68C\uD559\uACFC","estblYear":"2023","estblDprtnCd":"1202","estblSmstrSctnm":"1\uD559\uAE30","estblSmstrSctcd":"CMBS001400001","estblGrade":"1","sbjetSctnm":"\uAD50\uC591","sbjetNm":"\uC0AC\uD68C\uD559\uC758 \uC774\uD574","sbjetDvnno":"001","sbjetCd":"CLTR0067","gubun":null,"pckgeRqstPssblYn":"Y","pckgeRqstCnt":"0","name":null,"rmrk":null,"appcrCnt":"0","attlcPrscpCnt":"70","lssnsTimeInfo":"\uC6D4 1A,1B,2A,\uC218 2B,3A,3B","lssnsRealTimeInfo":"\uC6D4 09:00 ~ 10:30,\uC218 10:30 ~ 12:00","prctsTime":"0","doPlan":"Kor","thryTime":"3","totalPrfssNm":"\uC721\uC8FC\uC6D0,\uC774\uCC44\uBB38,\uCC9C\uC120\uC601,\uC870\uC8FC\uC740,\uC2E0\uD615\uC9C4,\uC774\uC18C\uD6C8","mngetEstblYn":"Y","code":null,"crdit":"3","expniSllbsYn":"N","bldngSn":null,"bldngCd":null,"bldngNm":null,"lssnsLcttmUntcd":null,"sbjetSctcd2":null,"rmnmCd":"451","isApi":null,"paging":false,"rowStatus":"R","pageSort":null}`))
+    //경북대학교 시간표 요청시 받아오는 json형식
