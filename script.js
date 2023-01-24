@@ -1,7 +1,6 @@
 let tmp;
 history.scrollRestoration = "manual" //새로고침시 맨 위로 올려야 시간표 뒤틀리지 않음
-    //시간표 색 조합
-    //시간표 맨 처음 위치 및 칸 설정
+    //기본설정(표 좌표, 크기, 시간표색깔)
 let originOfTable = document.getElementById("origin-of-table");
 let originOfTableXPos = originOfTable.getBoundingClientRect().x;
 let originOfTableYPos = originOfTable.getBoundingClientRect().y;
@@ -11,21 +10,23 @@ let colorArr = ["eeafaf", "afc4e7", "bae7af", "fff77f", "ff7f7f", "fdc4f8", "cb9
 let savedTimeList = new Array(5).fill(null).map(e => { return new Array(780).fill(false) });
 
 let savedListDiv = document.getElementById("saved-list-wrap");
+let timeTableEl = document.getElementById("time-table");
 
+const getTime = function(s) {
+    return s.split(":")[0] * 60 + +s.split(":")[1] - 540;
+}
+const initSavedTimeList = function() {
+    savedTimeList = new Array(5).fill(null).map(e => { return new Array(780).fill(false) });
+}
 class Subject {
     constructor(subjectJson) {
         subjectJson = subjectJson || "";
         this.sbjetNm = subjectJson.sbjetNm; //강의명
-        this.sbjetSctnm = subjectJson.sbjetSctnm //강의구분
-        this.estblGrade = subjectJson.estblGrade //학년
-        this.attlcPrscpCnt = subjectJson.attlcPrscpCnt; //수강정원
-        this.crdit = subjectJson.crdit; //학점
-        this.crseNo = subjectJson.crseNo; //강좌번호
         this.lctrm = subjectJson.lctrmInfo + "-" + subjectJson.rmnmCd; //강의실
         this.lssnsRealTime = [];
-        if (subjectJson) {
+        if (subjectJson.hasOwnProperty("lssnsRealTimeInfo") && subjectJson.lssnsRealTimeInfo != "") {
             this.lssnsRealTime = subjectJson.lssnsRealTimeInfo.split(",").map(e => {
-                tmp;
+                let tmp;
                 switch (e.charAt(0)) {
                     case "월":
                         tmp = 0;
@@ -46,7 +47,7 @@ class Subject {
                         tmp = -1;
                         break;
                 }
-                return [tmp, e.slice(2).split(" ~ ")[0].split(":")[0] * 60 + +e.slice(2).split(" ~ ")[0].split(":")[1] - 540, e.slice(2).split(" ~ ")[1].split(":")[0] * 60 + +e.slice(2).split(" ~ ")[1].split(":")[1] - 540]
+                return [tmp, getTime(e.slice(2).split(" ~ ")[0]), getTime(e.slice(2).split(" ~ ")[1])];
             });
         } //강의시간[요일(월:0~금:4 나머지:-1),시작시간(9:00 기준 0분),끝나는시간시작시간(9:00 기준 0분)]
         for (let i = 0; i < this.lssnsRealTime.length; i++) {
@@ -57,104 +58,87 @@ class Subject {
                 }
             }
         }
-        this.totalPrfssNm = subjectJson.totalPrfssNm; //교수명
     }
 }
 
 
-let table = document.getElementById("time-table");
+
+//시간표 추가, 저장 및 변경
 
 
-
-//시간표 추가 및 변경
-let newDiv;
-
-
-function saveSubject(subject, n) {
-    let savedCnt = savedSubjectList.length;
-    if (typeof(n) == "number") savedCnt = n;
-    if (subject == null) return;
-    let motherDiv = document.createElement("div");
-
-    let newDiv;
-    motherDiv.id = "saved-subject-" + savedCnt + "th";
-    motherDiv.className = "saved-subject";
-    for (let i = 0; i < subject.lssnsRealTime.length; i++) {
-        for (let j = subject.lssnsRealTime[i][1]; j <= subject.lssnsRealTime[i][2]; j++) {
-            if (savedTimeList[subject.lssnsRealTime[i][0]][j] == true) return -1;
-        }
-        newDiv = document.createElement("div");
-        newDiv.innerHTML = "<em>" + subject.sbjetNm + "</em><br><span>" + subject.lctrm + "</span>"
-        newDiv.style.width = tableWidth - 20 + "px";
-        newDiv.style.height = tableHeight * (subject.lssnsRealTime[i][2] - subject.lssnsRealTime[i][1]) / 30 - 21 + "px";
-        newDiv.style.position = "absolute";
-        newDiv.style.left = (originOfTableXPos + subject.lssnsRealTime[i][0] * tableWidth) + "px";
-        newDiv.style.top = (originOfTableYPos + (subject.lssnsRealTime[i][1] / 30) * tableHeight) + "px";
-        newDiv.style.backgroundColor = "#" + colorArr[savedCnt];
-        newDiv.addEventListener("click", e => {
-            if (window.confirm(subject.sbjetNm + "-시간표에서 지우시겠습니까?")) {
-                deleteNthSubject(n);
+function saveSubject(targetSubject) {
+    if (targetSubject == null) return;
+    let isRedup = false
+    for (let i = 0; i < targetSubject.lssnsRealTime.length; i++) {
+        for (let j = targetSubject.lssnsRealTime[i][1]; j <= targetSubject.lssnsRealTime[i][2]; j++) {
+            if (savedTimeList[targetSubject.lssnsRealTime[i][0]][j] == true) {
+                isRedup = true;
             }
-        })
-        motherDiv.appendChild(newDiv);
-        for (let j = subject.lssnsRealTime[i][1]; j <= subject.lssnsRealTime[i][2]; j++) {
-            savedTimeList[subject.lssnsRealTime[i][0]][j] = true;
+            savedTimeList[targetSubject.lssnsRealTime[i][0]][j] = true;
         }
     }
-    savedSubjectList.push(subject);
+    if (isRedup) {
+        for (let i = 0; i < targetSubject.lssnsRealTime.length; i++) {
+            for (let j = targetSubject.lssnsRealTime[i][1]; j <= targetSubject.lssnsRealTime[i][2]; j++) {
+
+                savedTimeList[targetSubject.lssnsRealTime[i][0]][j] = false;
+            }
+        }
+        return -1;
+    }
+
+    savedSubjectList.push(targetSubject);
     setCookie("savedSubjectList", savedSubjectList);
-    savedListDiv.appendChild(motherDiv);
+}
+
+function deleteNthSubject(n) {
+    if (n > savedSubjectList.length || n < 0) return -1;
+    let targetSubject = savedSubjectList.splice(n, 1);
+    for (let i = 0; i < targetSubject[0].lssnsRealTime.length; i++) {
+        for (let j = targetSubject[0].lssnsRealTime[i][1]; j <= targetSubject[0].lssnsRealTime[i][2]; j++) {
+            savedTimeList[targetSubject[0].lssnsRealTime[i][0]][j] = false;
+        }
+    }
+    setCookie("savedSubjectList", savedSubjectList);
 }
 
 function drawSubjectList() {
     let newDiv;
     let motherDiv;
-    let savedListWrapDiv = document.getElementById("saved-list-wrap");
+    let targetSubject;
+    savedListDiv.innerHTML = "";
     for (let i = 0; i < savedSubjectList.length; i++) {
-        let subject = savedSubjectList[i];
+        targetSubject = savedSubjectList[i];
         motherDiv = document.createElement("div");
         motherDiv.id = "saved-subject-" + i + "th";
         motherDiv.className = "saved-subject";
-        for (let j = 0; j < subject.lssnsRealTime.length; j++) {
+        for (let j = 0; j < targetSubject.lssnsRealTime.length; j++) {
             newDiv = document.createElement("div");
-            newDiv.innerHTML = "<em>" + subject.sbjetNm + "</em><br><span>" + subject.lctrm + "</span>"
+            newDiv.innerHTML = "<em>" + targetSubject.sbjetNm + "</em><br><span>" + targetSubject.lctrm + "</span>"
             newDiv.style.width = tableWidth - 20 + "px";
-            newDiv.style.height = tableHeight * (subject.lssnsRealTime[j][2] - subject.lssnsRealTime[j][1]) / 30 - 21 + "px";
+            newDiv.style.height = tableHeight * (targetSubject.lssnsRealTime[j][2] - targetSubject.lssnsRealTime[j][1]) / 30 - 21 + "px";
             newDiv.style.position = "absolute";
-            newDiv.style.left = (originOfTableXPos + subject.lssnsRealTime[j][0] * tableWidth) + "px";
-            newDiv.style.top = (originOfTableYPos + (subject.lssnsRealTime[j][1] / 30) * tableHeight) + "px";
+            newDiv.style.left = (originOfTableXPos + targetSubject.lssnsRealTime[j][0] * tableWidth) + "px";
+            newDiv.style.top = (originOfTableYPos + (targetSubject.lssnsRealTime[j][1] / 30) * tableHeight) + "px";
             newDiv.style.backgroundColor = "#" + colorArr[i];
-            newDiv.addEventListener("click", e => {
-                if (window.confirm(subject.sbjetNm + "-시간표에서 지우시겠습니까?")) {
+            newDiv.addEventListener("click", () => {
+                if (window.confirm(targetSubject.sbjetNm + "-시간표에서 지우시겠습니까?")) {
                     deleteNthSubject(i);
+                    drawSubjectList();
+
                 }
-            })
+            });
             motherDiv.appendChild(newDiv);
-            for (let k = subject.lssnsRealTime[j][1]; k <= subject.lssnsRealTime[j][2]; k++) {
-                savedTimeList[subject.lssnsRealTime[j][0]][k] = true;
+            for (let k = targetSubject.lssnsRealTime[j][1]; k <= targetSubject.lssnsRealTime[j][2]; k++) {
+                savedTimeList[targetSubject.lssnsRealTime[j][0]][k] = true;
             }
         }
 
-        savedListWrapDiv.appendChild(motherDiv);
+        savedListDiv.appendChild(motherDiv);
     }
+
 }
 
-function deleteNthSubject(n) {
-    if (n > savedSubjectList.length) return -1;
-    savedTimeList = new Array(5).fill(null).map(e => { return new Array(780).fill(false) });
-    let tmpSavedSubjectList = Array.from(savedSubjectList)
-    tmpSavedSubjectList.splice(n, 1);
-    let savedListWrapDiv = document.getElementById("saved-list-wrap");
-    savedListWrapDiv.innerHTML = "";
-    tmpSavedSubjectList.forEach((e, i) => {
-        saveSubject(e, i);
-    })
-    savedSubjectList = tmpSavedSubjectList;
-    tmpSavedSubjectList = null; //메모리 상에서 없애기
-    setCookie("savedSubjectList", savedSubjectList);
-}
-
-//직접입력의 버튼들 및 이벤트리스너
 let addByWrittenWrapDiv = document.getElementById("add-by-written-wrap");
 let writtenInfoWrapDiv = document.getElementById("written-info-wrap");
 let addTimeButton = document.getElementById("add-time-button");
@@ -220,8 +204,8 @@ function setTmpSubject() {
     let newDiv;
     motherDiv.id = "tmp-subject-wrap";
     for (let i = 0; i < n; i++) {
-        startMin = writtenStartTimeList[i].value.split(":")[0] * 60 + (+writtenStartTimeList[i].value.split(":")[1]) - 540;
-        endMin = writtenEndTimeList[i].value.split(":")[0] * 60 + (+writtenEndTimeList[i].value.split(":")[1]) - 540;
+        startMin = getTime(writtenStartTimeList[i].value);
+        endMin = getTime(writtenEndTimeList[i].value);
         if (startMin < 0) {
             alert("잘못 입력된 시작 시간이 있습니다\n 오전 09시 이후로 설정해주세요");
             return -1;
@@ -232,7 +216,7 @@ function setTmpSubject() {
         }
 
         newDiv = document.createElement("div");
-        newDiv.className = "tmp-subject"
+        newDiv.className = "tmp-subject";
         newDiv.style.position = "absolute";
         newDiv.style.left = (originOfTableXPos + writtenSelcetList[i].value * tableWidth) + "px";
         newDiv.style.top = (originOfTableYPos + (startMin / 30) * tableHeight) + "px";
@@ -270,13 +254,14 @@ function saveSubjectByInput() {
             alert((i + 1) + "번째 수업시간의 종료시간을 적어주세요");
             return -1;
         }
-        newSubject.lssnsRealTime[i][1] = writtenStartTimeList[i].value.split(":")[0] * 60 + (+writtenStartTimeList[i].value.split(":")[1]) - 540;
-        newSubject.lssnsRealTime[i][2] = writtenEndTimeList[i].value.split(":")[0] * 60 + (+writtenEndTimeList[i].value.split(":")[1]) - 540;
+        newSubject.lssnsRealTime[i][1] = getTime(writtenStartTimeList[i].value);
+        newSubject.lssnsRealTime[i][2] = getTime(writtenEndTimeList[i].value);
     }
     if (saveSubject(newSubject) == -1) {
         alert("겹치는 시간이 존재합니다");
         return -1;
     }
+    drawSubjectList();
     writtenSubjectNameInput.value = '';
     writtenlctrmInput.value = '';
 }
@@ -285,7 +270,6 @@ saveSubjectButton.addEventListener("click", e => {
     while (addedTimeInputList.length != 0) {
         addedTimeInputList[addedTimeInputList.length - 1].remove();
     }
-    drawNewAddedInputDiv();
 })
 
 //이벤트 리스너 버그 때문에 이렇게 이벤트 처리함
@@ -321,9 +305,10 @@ function getCookie(key) {
         return JSON.parse(getItem[0]);
     }
 };
-
+//쿠키 불러오기
 let savedSubjectList = getCookie("savedSubjectList") || [];
 if (savedSubjectList.length > 0) drawSubjectList();
 
+/*경북대학교 시간표 요청시 받아오는 json형식
 console.log(JSON.parse(`{"rowIndex":0,"success":false,"message":null,"pageSize":100,"pageNum":1,"lctreMthodNm":null,"lctrmInfo":"\uC0B0\uACA9\uB3D9 \uCEA0\uD37C\uC2A4  \uC0AC\uD68C\uACFC\uD559\uB300\uD559","lctreLnggeSctcd":null,"crseNo":"CLTR0067-001","estblUnivNm":"\uC0AC\uD68C\uACFC\uD559\uB300\uD559","estblDprtnNm":"\uC0AC\uD68C\uD559\uACFC","estblYear":"2023","estblDprtnCd":"1202","estblSmstrSctnm":"1\uD559\uAE30","estblSmstrSctcd":"CMBS001400001","estblGrade":"1","sbjetSctnm":"\uAD50\uC591","sbjetNm":"\uC0AC\uD68C\uD559\uC758 \uC774\uD574","sbjetDvnno":"001","sbjetCd":"CLTR0067","gubun":null,"pckgeRqstPssblYn":"Y","pckgeRqstCnt":"0","name":null,"rmrk":null,"appcrCnt":"0","attlcPrscpCnt":"70","lssnsTimeInfo":"\uC6D4 1A,1B,2A,\uC218 2B,3A,3B","lssnsRealTimeInfo":"\uC6D4 09:00 ~ 10:30,\uC218 10:30 ~ 12:00","prctsTime":"0","doPlan":"Kor","thryTime":"3","totalPrfssNm":"\uC721\uC8FC\uC6D0,\uC774\uCC44\uBB38,\uCC9C\uC120\uC601,\uC870\uC8FC\uC740,\uC2E0\uD615\uC9C4,\uC774\uC18C\uD6C8","mngetEstblYn":"Y","code":null,"crdit":"3","expniSllbsYn":"N","bldngSn":null,"bldngCd":null,"bldngNm":null,"lssnsLcttmUntcd":null,"sbjetSctcd2":null,"rmnmCd":"451","isApi":null,"paging":false,"rowStatus":"R","pageSort":null}`))
-    //경북대학교 시간표 요청시 받아오는 json형식
+*/
